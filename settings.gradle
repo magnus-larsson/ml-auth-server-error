@@ -1,0 +1,3 @@
+include ':product-composite-service'
+include ':gateway'
+include ':authorization-server'

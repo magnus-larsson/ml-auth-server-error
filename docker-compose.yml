@@ -1,0 +1,45 @@
+services:
+  product-composite:
+    build: product-composite-service
+    image: hands-on/product-composite-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yml,file:/config-repo/product-composite.yml
+    volumes:
+      - $PWD/config-repo:/config-repo
+    depends_on:
+      auth-server:
+        condition: service_healthy
+
+  gateway:
+    build: gateway
+    image: hands-on/gateway
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yml,file:/config-repo/gateway.yml
+      - SPRING_SSL_BUNDLE_JKS_GATEWAY_KEYSTORE_PASSWORD=${GATEWAY_TLS_PWD}
+    volumes:
+      - $PWD/config-repo:/config-repo
+    ports:
+      - "8443:8443"
+    depends_on:
+      auth-server:
+        condition: service_healthy
+
+  auth-server:
+    build: authorization-server
+    image: hands-on/auth-server
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CONFIG_LOCATION=file:/config-repo/application.yml,file:/config-repo/auth-server.yml
+    volumes:
+      - $PWD/config-repo:/config-repo
+    healthcheck:
+      test: ["CMD", "wget", "-O -", "-q", "http://localhost/actuator/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
