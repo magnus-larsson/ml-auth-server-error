@@ -23,7 +23,7 @@
     5. Select all scopes and submit consent
     6. Login done
 
-2. Update to `springdoc-openapi` 2.8.4 in `product-composite-service/build.gradle` and repeat the instruction above.
+2. Update to `springdoc-openapi` 2.8.5 in `product-composite-service/build.gradle` and repeat the instruction above.
 
     1. After the sign in, an errorpage with the following text will now be displayed:
 
